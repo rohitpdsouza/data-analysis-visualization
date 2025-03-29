@@ -49,3 +49,11 @@ ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point(aes(color = species, shape = island)) + 
   geom_smooth(method = "lm", color = "purple")
 
+
+
+## Save plot
+my_bar_plot <- ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) + 
+  geom_point(aes(color = species, shape = island)) + 
+  geom_smooth(method = "lm", color = "purple")
+
+ggsave(filename = "mpg-plot.png", plot = my_bar_plot)
