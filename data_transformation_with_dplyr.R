@@ -117,6 +117,137 @@ flights |> arrange(desc(distance)) |>
 
 
 
+#### COLUMNS#####
+
+# There are four important verbs that affect the columns without changing the rows: 
+# 1) mutate() creates new columns that are derived from the existing columns 
+# 2) select() changes which columns are present
+# 3) rename() changes the names of the columns
+# 4) relocate() changes the positions of the columns.
+
+
+# 1) mutate
+flights |> 
+  mutate( 
+    gain = dep_delay - arr_delay,
+    speed = distance / (air_time * 60)
+    )
+
+flights |> 
+  mutate( 
+    gain = dep_delay - arr_delay,
+    speed = distance / (air_time * 60),
+    .before = 1  #new columns will be added to the left
+  )
+
+flights |> 
+  mutate( 
+    gain = dep_delay - arr_delay,
+    speed = distance / (air_time * 60),
+    .after = day  #new columns will be added after the day column
+  )
+
+flights |> 
+  mutate( 
+    gain = dep_delay - arr_delay,
+    speed = distance / (air_time * 60),
+    .before = day  #new columns will be added before the day column
+  )
+
+flights |> 
+  mutate( 
+    gain = dep_delay - arr_delay,
+    hours = air_time / 60,
+    gain_per_hour = gain / hours,  
+    .keep = "used" #only columns involved or computed will be kept
+  )
+
+
+# 2) Select
+flights |> 
+  select(year, month, day) #select columns by name 
+
+flights |> 
+  select(year:day) #select all columns between year and day (inclusive of year and day)
+
+flights |>
+  select(!year:day) # select all columns except those between year and day(inclusive of year and day)
+
+flights |>
+  select(where(is.character)) # select all columns that are character
+
+# useful fuctions: 
+# starts_with("abc"): matches names that begin with “abc”.
+# ends_with("xyz"): matches names that end with “xyz”.
+# contains("ijk"): matches names that contain “ijk”.
+# num_range("x", 1:3, width = 1): to select multiple columns with names that follow a consistent numerical pattern
+# any_of() allows you to safely select columns even if some are missing. 
+
+flights |>
+  select(tail_num = tailnum) #rename tailnum to tail_num
+
+########## 3) rename
+
+flights |>
+  rename(tail_num = tailnum) # keep all the existing variables and just rename tailnum 
+
+
+#janitor::clean_names() to standardize and clean column names in a data frame or tibble
+# It applies consistent formatting by:
+# - Converting names to lowercase.
+# - Replacing spaces and special characters with underscores.
+# - Removing leading or trailing whitespace.
+# - Ensuring names start with a letter.
+# - Making the names R-friendly and consistent.
+
+# janitor::clean_names(dat, case = "snake")
+# dat: The dataframe or tibble you want to clean.
+# case: The desired casing format:
+# "snake" → my_variable_name (default)
+# "lower_camel" → myVariableName
+# "upper_camel" → MyVariableName
+# "screaming_snake" → MY_VARIABLE_NAME
+# "lower_upper" → myVARIABLEname
+# "upper_lower" → MYvariableNAME
+
+# 4) relocate
+flights |>
+  relocate(time_hour, air_time) |> # move time_hour and air_time to the front
+  glimpse()
+
+flights |> 
+  relocate(year:dep_time, .after = time_hour) |> #move all columns between and including year and dep_time after time_hour
+  glimpse()
+
+flights |>
+  relocate(starts_with("arr"), .before = dep_time) |>
+  glimpse()
+
+## Exercise
+
+# Compare dep_time, sched_dep_time, and dep_delay. How would you expect those three numbers to be related?
+flights |> 
+  select(contains("dep_")) |>
+  glimpse()
+
+flights |> 
+  select(dep_time, sched_dep_time, dep_delay) |>
+  mutate(calculated_delay = 
+           (((dep_time %/% 100) * 60) + (dep_time %% 100)) - 
+           (((sched_dep_time %/% 100) * 60) + (sched_dep_time %% 100))
+           ) |>
+  filter(dep_delay != calculated_delay)
+
+
+# ignore case with contains
+flights |> select(contains("TIME")) #case agnostic
+flights |> select(contains("TIME", ignore.case = FALSE)) #case sensitive
+
+
+#Rename air_time to air_time_min to indicate units of measurement and move it to the beginning of the data frame.
+flights |> 
+  rename(air_time_min = air_time) |> 
+  relocate(air_time_min, .before = 1)
 
 
 
