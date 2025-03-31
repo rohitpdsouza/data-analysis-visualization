@@ -49,6 +49,50 @@ ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
   geom_point(aes(color = species, shape = island)) + 
   geom_smooth(method = "lm", color = "purple")
 
+### different smooth functions
+# auto -> automatically selects the best method based on dataset size
+# loess -> locally estimated scatterpoint smoothing. Ideal for small datasets 
+# gam -> generalized additive model. ideal for non-linear relationships and large datasets
+# lm -> linear model 
+# glm -> generalized linear model 
+# se parameter TRUE displays 95% confidence interval FALSE hides the confidence interval 
+
+#E.g. variation of delays in flights over the course of the day
+
+flights |> 
+  group_by(hour) |>
+  summarize(n = n(), average_dep_delay = mean(dep_delay, na.rm = TRUE)) |>
+  ggplot(aes(x = hour, y = average_dep_delay)) + 
+  geom_point() + 
+  geom_smooth(method = "lm") ## not useful as delay increase till evening and then reduces hence not linear
+
+flights |> 
+  group_by(hour) |>
+  summarize(n = n(), average_dep_delay = mean(dep_delay, na.rm = TRUE)) |>
+  ggplot(aes(x = hour, y = average_dep_delay)) + 
+  geom_point() + 
+  geom_smooth(method = "glm") ## not useful as delay increase till evening and then reduces hence not linear
+
+flights |> 
+  group_by(hour) |>
+  summarize(n = n(), average_dep_delay = mean(dep_delay, na.rm = TRUE)) |>
+  ggplot(aes(x = hour, y = average_dep_delay)) + 
+  geom_point() + 
+  geom_smooth(method = "loess") ## non-linear, hence good interpretation 
+
+flights |> 
+  group_by(hour) |>
+  summarize(n = n(), average_dep_delay = mean(dep_delay, na.rm = TRUE)) |>
+  ggplot(aes(x = hour, y = average_dep_delay)) + 
+  geom_point() + 
+  geom_smooth(method = "gam") ## good too
+
+flights |> 
+  group_by(hour) |>
+  summarize(n = n(), average_dep_delay = mean(dep_delay, na.rm = TRUE)) |>
+  ggplot(aes(x = hour, y = average_dep_delay)) + 
+  geom_point() + 
+  geom_smooth(method = "auto")  ## use auto if not sure
 
 
 ## Save plot
