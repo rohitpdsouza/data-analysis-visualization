@@ -1,3 +1,8 @@
+library(tidyverse)
+library(palmerpenguins)
+library(nycflights13)
+
+
 #dplyr overwrites some functions in base R. 
 #If you want to use the base version of these functions after loading dplyr, you’ll need to use their full names: stats::filter() and stats::lag()
 #packagename::functionname() stats::filter() and stats::lag()
