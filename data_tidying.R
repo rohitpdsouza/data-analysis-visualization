@@ -8,10 +8,13 @@ library(nycflights13)
 # 2. Each observation is a row; each row is an observation.
 # 3. Each value is a cell; each cell is a single value.
 
+#(II) Pivot long
+
 # pivot your data into a tidy form, with variables in the columns and observations in the rows
 # tidyr provides two functions for pivoting data: pivot_longer() and pivot_wider()
 
 #The billboard dataset records the billboard rank of songs in the year 2000
+# columns names are one variable (week) and cell values are another variable (rank)
 
 billboard_pivot <- billboard |> 
   pivot_longer(
@@ -35,7 +38,7 @@ billboard_pivot |>
 
 
 #who2 contains tuberculosis observations with multiple information crammed into column names: 
-#diagnosis method, gender and age
+#column names are a combination of multiple variables: diagnosis method, gender and age
 
 
 # A tibble: 7,240 × 58
@@ -103,5 +106,43 @@ who2 |>
 # ℹ 76,036 more rows
 # ℹ Use `print(n = ...)` to see more rows
   
+#household contains column names which are a mix of variables (name, dob) and values (child1/child2)
+# A tibble: 5 × 5
+#     family  dob_child1  dob_child2    name_child1   name_child2
+#     <int>   <date>      <date>        <chr>         <chr>      
+# 1     1     1998-11-26  2000-01-29    Susan         Jose       
+# 2     2     1996-06-22  NA            Mark          NA         
+# 3     3     2002-07-11  2004-04-05    Sam           Seth       
+# 4     4     2004-10-10  2009-08-27    Craig         Khai       
+# 5     5     2000-12-05  2005-02-28    Parker        Gracie 
 
+household |>
+  pivot_longer(
+    cols = !family,
+    names_to = c(".value", "child"),
+    names_sep = "_",
+    values_drop_na = TRUE
+  )
+# A tibble: 9 × 4
+# family  child     dob        name  
+# <int>   <chr>     <date>     <chr> 
+# 1       child1    1998-11-26 Susan 
+# 1       child2    2000-01-29 Jose  
+# 2       child1    1996-06-22 Mark  
+# 3       child1    2002-07-11 Sam   
+# 3       child2    2004-04-05 Seth  
+# 4       child1    2004-10-10 Craig 
+# 4       child2    2009-08-27 Khai  
+# 5       child1    2000-12-05 Parker
+# 5       child2    2005-02-28 Gracie
 
+# (III) Pivot wide
+# Pivot long makes a dataset long by increasing rows and reducing columns
+# Pivot wide makes dataset wider by increasing columns and reducing rows when one observation is spread across multiple row
+
+cms_patient_experience |>
+  pivot_wider(
+    id_cols = starts_with("org"),
+    names_from = measure_cd,
+    values_from = prf_rate
+  )
