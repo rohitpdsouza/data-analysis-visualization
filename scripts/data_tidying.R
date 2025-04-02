@@ -1,6 +1,4 @@
 library(tidyverse)
-library(palmerpenguins)
-library(nycflights13)
 
 # (I) Tidy data
 # There are three interrelated rules that make a dataset tidy:
@@ -8,25 +6,47 @@ library(nycflights13)
 # 2. Each observation is a row; each row is an observation.
 # 3. Each value is a cell; each cell is a single value.
 
+# tidyr provides two functions for pivoting data: pivot_longer() and pivot_wider()
+
 #(II) Pivot long
 
 # pivot your data into a tidy form, with variables in the columns and observations in the rows
-# tidyr provides two functions for pivoting data: pivot_longer() and pivot_wider()
 
 #The billboard dataset records the billboard rank of songs in the year 2000
 # columns names are one variable (week) and cell values are another variable (rank)
+
+# A tibble: 317 × 79
+# artist      track date.entered   wk1   wk2   wk3   wk4   wk5   wk6   wk7   wk8   wk9  wk10  wk11  wk12  wk13  wk14
+# <chr>       <chr> <date>       <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+# 2 Pac       Baby… 2000-02-26      87    82    72    77    87    94    99    NA    NA    NA    NA    NA    NA    NA
+# 2Ge+her     The … 2000-09-02      91    87    92    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
 
 billboard_pivot <- billboard |> 
   pivot_longer(
     cols = starts_with("wk", ignore.case = TRUE),  # untidy data in columns wk
     #cols = !c(artist, track, date.entered) # another way to select columns that you wish to tidy
-    names_to = "week",   #
-    values_to = "rank",
+    names_to = "week",   #all columns starting with "wk" will pivot to single column week
+                         #wk1/wk2...will become values for the column
+    values_to = "rank",  #values in the cell for all "wk" columns will become values for the variable "rank"
     values_drop_na = TRUE
   ) |>
   mutate(
     week = parse_number(week)
   )
+
+# A tibble: 5,307 × 5
+# artist  track                   date.entered  week  rank
+# <chr>   <chr>                   <date>       <dbl> <dbl>
+# 2 Pac   Baby Don't Cry (Keep... 2000-02-26       1    87
+# 2 Pac   Baby Don't Cry (Keep... 2000-02-26       2    82
+# 2 Pac   Baby Don't Cry (Keep... 2000-02-26       3    72
+# 2 Pac   Baby Don't Cry (Keep... 2000-02-26       4    77
+# 2 Pac   Baby Don't Cry (Keep... 2000-02-26       5    87
+# 2 Pac   Baby Don't Cry (Keep... 2000-02-26       6    94
+# 2 Pac   Baby Don't Cry (Keep... 2000-02-26       7    99
+# 2Ge+her The Hardest Part Of ... 2000-09-02       1    91
+# 2Ge+her The Hardest Part Of ... 2000-09-02       2    87
+# 2Ge+her The Hardest Part Of ... 2000-09-02       3    92
 
 billboard_pivot |>
   ggplot(aes(x = week, y = rank, group = track)) + ## plot the line for 1 track showing the rank by week
@@ -119,7 +139,8 @@ who2 |>
 household |>
   pivot_longer(
     cols = !family,
-    names_to = c(".value", "child"),
+    names_to = c(".value", "child"), #1st component, before the separator, will become the column name
+                                     #2nd component, after the separator will become values for the column "child"
     names_sep = "_",
     values_drop_na = TRUE
   )
@@ -140,9 +161,30 @@ household |>
 # Pivot long makes a dataset long by increasing rows and reducing columns
 # Pivot wide makes dataset wider by increasing columns and reducing rows when one observation is spread across multiple row
 
+# A tibble: 500 × 5
+# org_pac_id org_nm                               measure_cd   measure_title                                prf_rate
+# <chr>      <chr>                                <chr>        <chr>                                           <dbl>
+# 0446157747 USC CARE MEDICAL GROUP INC           CAHPS_GRP_1  CAHPS for MIPS SSM: Getting Timely Care, Ap…       63
+# 0446157747 USC CARE MEDICAL GROUP INC           CAHPS_GRP_2  CAHPS for MIPS SSM: How Well Providers Comm…       87
+# 0446157747 USC CARE MEDICAL GROUP INC           CAHPS_GRP_3  CAHPS for MIPS SSM: Patient's Rating of Pro…       86
+
 cms_patient_experience |>
   pivot_wider(
     id_cols = starts_with("org"),
     names_from = measure_cd,
     values_from = prf_rate
   )
+
+# A tibble: 95 × 8
+# org_pac_id org_nm                         CAHPS_GRP_1 CAHPS_GRP_2 CAHPS_GRP_3 CAHPS_GRP_5 CAHPS_GRP_8 CAHPS_GRP_12
+# <chr>      <chr>                                <dbl>       <dbl>       <dbl>       <dbl>       <dbl>        <dbl>
+# 0446157747 USC CARE MEDICAL GROUP INC              63          87          86          57          85           24
+# 0446162697 ASSOCIATION OF UNIVERSITY PHY…          59          85          83          63          88           22
+# 0547164295 BEAVER MEDICAL GROUP PC                 49          NA          75          44          73           12
+# 0749333730 CAPE PHYSICIANS ASSOCIATES PA           67          84          85          65          82           24
+# 0840104360 ALLIANCE PHYSICIANS INC                 66          87          87          64          87           28
+# 0840109864 REX HOSPITAL INC                        73          87          84          67          91           30
+# 0840513552 SCL HEALTH MEDICAL GROUP DENV…          58          83          76          58          78           26
+# 0941545784 GRITMAN MEDICAL CENTER INC              46          86          81          54          NA           25
+# 1052612785 COMMUNITY MEDICAL GROUP LLC             65          84          80          58          87           29
+# 1254237779 OUR LADY OF LOURDES MEMORIAL …          61          NA          NA          65          NA           17
