@@ -134,5 +134,85 @@ read_csv(
 
 #(IV) Reading data from multiple files
 
-#sales_files <- c("data/01-sales.csv", "data/02-sales.csv", "data/03-sales.csv")
-#read_csv(sales_files, id = "file")
+sales_files <- c(
+  "C:/Users/prohi/Documents/Github/data-with-r/data/01-sales.csv", 
+  "C:/Users/prohi/Documents/Github/data-with-r/data/02-sales.csv", 
+  "C:/Users/prohi/Documents/Github/data-with-r/data/03-sales.csv"
+  )
+
+read_csv(sales_files, id = "file")
+
+sales_files <- list.files(
+  "C:/Users/prohi/Documents/Github/data-with-r/data/", 
+  pattern = "sales\\.csv$",  #files names that contain sales and $ means eod of string i.e. end with .csv
+  full.names = TRUE
+  )
+
+read_csv(sales_files, id = "file")
+
+# (V) Writing to a file
+
+# read and tidy the data
+students <- read_csv(
+  "C:/Users/prohi/Documents/Github/data-with-r/data/students.csv",
+  na = c("N/A","","na")
+  ) |>
+  janitor::clean_names(case = "snake") |>
+  mutate(
+    meal_plan = factor(meal_plan),
+    age = parse_number(if_else(age == "five", "5", age))
+  )
+
+# write the data
+# column specification is lost in write_csv, need to re-create the column specifications everytime
+write_csv(students, "C:/Users/prohi/Documents/Github/data-with-r/data/students-02.csv")
+read_csv("C:/Users/prohi/Documents/Github/data-with-r/data/students-02.csv")
+
+#Alternative 1 is to store the data in R customer binary format called RDS
+write_rds(students, "C:/Users/prohi/Documents/Github/data-with-r/data/students-02.rds")
+read_rds("C:/Users/prohi/Documents/Github/data-with-r/data/students-02.rds")
+
+#Alternative 2 is to store in parquet files
+library(arrow)
+write_parquet(students, "C:/Users/prohi/Documents/Github/data-with-r/data/students.parquet")
+read_parquet("C:/Users/prohi/Documents/Github/data-with-r/data/students.parquet")
+
+# (VI) Data entry
+
+# "tibble" and "tribble" are 2 easy options for assembling a tibble by hand
+# tibble is by columns
+# tribble is by rows : transposed tribble
+
+tibble(
+  x = c(1, 2, 3),
+  y = c("a", "b", "c"),
+  z = c(0.01, 0.02, 0.03)
+)
+# A tibble: 3 × 3
+# x       y         z
+# <dbl>   <chr>     <dbl>
+# 1       a         0.01
+# 2       b         0.02
+# 3       c         0.03
+
+
+
+tribble(
+  ~x, ~y, ~z,
+  1, "a", 0.01,
+  2, "b", 0.02,
+  3, "c", 0.03
+)
+# A tibble: 3 × 3
+# x       y         z
+# <dbl>   <chr>     <dbl>
+# 1       a         0.01
+# 2       b         0.02
+# 3       c         0.03
+
+
+
+
+
+
+
