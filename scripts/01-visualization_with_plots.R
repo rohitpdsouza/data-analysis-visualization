@@ -2,6 +2,7 @@ library(tidyverse)
 library(palmerpenguins)
 library(nycflights13)
 
+
 ##Bar plots
 ggplot(penguins, aes(x = island, fill = species)) + 
   geom_bar()
@@ -200,3 +201,15 @@ ggsave(filename = "mpg-plot.png", plot = my_bar_plot)
 # 2 variables : use scatter plot or box plot
 # 3+ variables : use color, shape, size, facets to encode the extra variables
 
+
+#Important : Variable scoping
+# Variable scoping refers to where R looks to find the value of a variable used in your plot
+# 
+# There are 2 main scopes:
+# (1)Used inside aes(): ggplot2 looks inside the data frame
+# (2)used outside aes(): ggplot2 looks in the global environment
+# 
+# General Rule:
+# 1) Inside aes() : ggplot2 looks inside the data frame e.g. aes(color = class)
+# 2) Outside aes() : ggplot2 looks in the global environment e.g. size = 3, color = "red"
+# 3) Inside aes() with data = : ggplot2 looks in that specific data e.g. geom_line(data = subset(), aes=())
