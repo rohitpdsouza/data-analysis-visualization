@@ -174,3 +174,78 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
     method = "auto",
     se = FALSE,
   )
+
+#(II) Facets
+
+#Faceting splits a plot into subplots that each display one subset of the data based on a categorical variable
+
+ggplot(mpg, aes(x = displ, y = hwy)) + 
+  geom_point() +
+  facet_wrap(~cyl) +
+  labs(
+    title = "Scatter plot displ vs hwy miles", 
+    subtitle = "facet by cyl"
+  )
+
+#facet_grid(rows ~ columns)
+#facet_grid(x ~ .) = facet in rows
+#facet_grid(. ~ y) = facet in columns
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point(
+    size = 1
+  ) +
+  facet_grid(drv ~ cyl) +
+  labs(
+    title = "Scatter plot displ vs hwy miles",
+    subtitle = "facet by drive engine and cyl"
+  )
+
+#To visualize the relationship within each facet better, set the scales argument to free
+#"free_x" will allow for different scales of x-axis across columns
+#"free_y" will allow for different scales on y-axis across rows
+#"free" will allow both
+#Controls whether axes are fixed or free (e.g., "fixed", "free", "free_x", "free_y")
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point() +
+  facet_grid(
+    drv ~ cyl,
+    scales = "free"
+  ) +
+  labs(
+    title = "Scatter plot displ vs hwy miles",
+    subtitle = "facet by drive engine and cyl nos"
+  )
+
+#nrow controls how the facet panels are laid out. nrow=2 forces ggplot to plot the facets in 2 horizontal rows.
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point() +
+  facet_wrap(~drv, nrow = 2)
+
+#For small to medium datasets: Color works well; faceting may feel unnecessary
+# For larger datasets:
+#   1.Faceting becomes more valuable because it breaks down complexity.
+#   2.Color can get overwhelmed due to overplotting — you might miss patterns.
+#   3.Combining both is often a good idea: facet by one variable, color by another (if distinct and small in number).
+
+
+#(III) Statistical Transformations
+
+#Many graphs, like scatterplots, plot the raw values of your dataset. 
+
+#Other graphs, like bar charts, calculate new values to plot:
+#1. Bar charts, histograms, and frequency polygons bin your data and then plot bin counts, the number of points that fall in each bin
+#2. Smoothers fit a model to your data and then plot predictions from the model
+#3. Boxplots compute the five-number summary of the distribution and then display that summary as a specially formatted box
+
+#The algorithm used to calculate new values for a graph is called a stat, short for statistical transformation.
+
+#If you already have the count , use stat = identity to plot the count directly
+diamonds |>
+  count(cut) |>
+  ggplot(aes(x = cut, y = n)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = n), vjust = -0.5, size = 3) 
+  #geom_label(aes(label = n), vjust = -0.5, size = 3) #geom label will show a background box behind the text
+
+
+

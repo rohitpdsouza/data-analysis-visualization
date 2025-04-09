@@ -1,3 +1,8 @@
 1) What geom would you use to draw a line chart? A boxplot? A histogram? An area chart?
 
 2) Study ridgeline plots
+
+3) Facets may have different y-axis scales unless you fix them, which can make comparisons tricky
+
+4) Faceting is designed for categorical variables. You can’t easily facet by a continuous variable unless you bin it first.
+
