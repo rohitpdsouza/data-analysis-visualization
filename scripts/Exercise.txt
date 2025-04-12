@@ -6,3 +6,7 @@
 
 4) Faceting is designed for categorical variables. You can’t easily facet by a continuous variable unless you bin it first.
 
+
+5)geom_point(position = "jitter"): geom_jitter().
+
+To learn more about a position adjustment, look up the help page associated with each adjustment: ?position_dodge, ?position_fill, ?position_identity, ?position_jitter, and ?position_stack.

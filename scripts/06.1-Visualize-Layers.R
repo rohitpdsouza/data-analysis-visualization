@@ -248,4 +248,164 @@ diamonds |>
   #geom_label(aes(label = n), vjust = -0.5, size = 3) #geom label will show a background box behind the text
 
 
+#after_stat() is used inside aes() to refer to a computed variable after a statistical transformation has been applied
+#geom_bar() : stat=count :  count / prop
+#geom_histogram : stat=bin : count / density / ncount / ndensity
+#geom_smooth : stat=smooth : y, ymin, ymax
+#geom_boxplot : stat=boxplot : ymin / lower / middle / upper / ymax / outliers
 
+
+ggplot(diamonds) +
+  geom_bar(aes(x = cut, y = after_stat(prop), group = 1))
+#geom_bar groups the data. By using group = 1 we are forcing ggplot to treat all rows as 1 group to calculate the proportions
+
+
+#(III.1) stat_summary()
+
+#stat_summary() lets us summarize the data before plotting - instead of plotting the raw data points
+ggplot(diamonds) +
+  stat_summary(
+    aes(x = cut, y = depth),
+    fun.min = min,
+    fun.max = max,
+    fun = median
+  )
+
+
+#plot mean highway miles for each class as a point
+ggplot(mpg, aes(x = class, y = hwy)) +
+  stat_summary(
+    fun = mean,
+    geom = "point",  #show the points in layer 1
+    color = "blue",
+    size = 3
+  ) + 
+  stat_summary(
+    fun = mean,
+    geom = "text",   #show the values in layer 2
+    aes(label = round(after_stat(y),2)),
+    vjust = -0.6,
+    color = "black"
+  )
+
+#show the mean of highway miles for each class with error bars showing +-1 SD
+ggplot(mpg, aes(x = class, y = hwy)) +
+  stat_summary(
+    fun = mean,
+    geom = "point", #Layer 1 will plot the mean point
+    color = "blue",
+    size = 3
+  ) +
+  stat_summary(
+    fun = "mean",
+    geom = "text", #Layer 2 will show the mean value for the point
+    aes(label = round(after_stat(y),2)),
+    color = "black",
+    hjust = 1.3
+  ) +
+  stat_summary(
+    fun.data = mean_sdl, 
+    fun.args = list(mult = 1),
+    geom = "errorbar", #Layer 3 will show the errorbar with +-1 SD
+    width = 0.2
+  ) +
+  stat_summary(
+    inherit.aes = FALSE,
+    mapping = aes(x = class, y = hwy, label = round(after_stat(ymin),2)),
+    fun.data = mean_sdl,
+    fun.args = list(mult = 1),
+    geom = "text",   #Layer 4 will show the minimum value in red
+    color = "red",
+    vjust = -1.5 
+  ) +
+  stat_summary(
+    inherit.aes = FALSE,
+    mapping = aes(x = class, y = hwy, label = round(after_stat(ymax),2)),
+    fun.data = mean_sdl,
+    fun.args = list(mult = 1),
+    geom = "text",  #Layer 5 will show the maximum value in green
+    color = "darkgreen",
+    vjust = 2
+  )
+
+
+#(IV) Position Adjustments
+
+#plot by drv engine
+ggplot(mpg, aes(x = drv)) +
+  geom_bar(aes(color = drv)) +
+  geom_text(
+    stat = "count",
+    aes(label = after_stat(count)),
+    vjust = -0.5
+  )
+
+#plot by drv engine
+ggplot(mpg, aes(x = drv)) +
+  geom_bar(
+    aes(fill = drv)
+  ) +
+  geom_text(
+    stat = "count",
+    aes(label = after_stat(count)),
+    vjust = -0.5
+  )
+
+#plot by drv engine and different class
+ggplot(mpg, aes(x = drv)) +
+  geom_bar(
+    aes(fill = class)
+  )
+
+#Interesting : Show count for each stack
+ggplot(mpg, aes(x = drv)) +
+  geom_bar(aes(fill = class)) + #Layer1 will the bar chart
+                                #fill = class will stack the bars
+  
+  #stat=count will make ggplot automatically compute the row count for each combination of aesthetics drv & class
+  geom_text(
+    stat = "count",
+    aes(
+      fill = class, 
+      label = after_stat(count)
+    ),
+    position = position_stack(vjust = 0.5),
+    color = "white"
+  )
+
+#In ggplot2, position adjustments control how elements are arranged when they would otherwise overlap
+#Especially important in bar charts where multiple bars can be mapped to the same x-position
+
+#(IV.1) position = "identity"
+#Bars overlap directly
+#Bars stacked on top of each other, unless alpha is used to differentiate them
+ggplot(mpg, aes(x = drv)) +
+  geom_bar(
+    aes(fill = class),
+    position = "identity",
+    alpha = 0.5
+  ) 
+
+#(IV.2) position = "dodge"
+#Bars are placed next to each other within each x group
+ggplot(mpg, aes(x = drv)) +
+  geom_bar(
+    aes(fill = class),
+    #position = "dodge"
+    position = position_dodge(width = 0.9)
+  ) +
+  geom_text(
+    stat = "count",
+    aes(fill = class, label = after_stat(count)),
+    position = position_dodge(width = 0.9),
+    color = "black",
+    vjust = -0.2
+  )
+
+#(IV.3) position = "fill"
+#Bars are stacked and scaled to the same height
+ggplot(mpg, aes(x = drv)) +
+  geom_bar(
+    aes(fill = class),
+    position = "fill"
+  )
