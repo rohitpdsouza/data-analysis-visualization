@@ -409,3 +409,17 @@ ggplot(mpg, aes(x = drv)) +
     aes(fill = class),
     position = "fill"
   )
+
+#(IV.4) position="jitter"
+#Useful in scatterplots when we have overplotting, this adds some random noise to make the plot more revealing
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_jitter(width = 0.2, alpha = 0.5, color = "blue")
+
+#Another way to manage overplotting is geom_count() which scales the size of the point based on the number of
+#observations that share the same (x,y) coordinates
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_count()
+
+
+
+
