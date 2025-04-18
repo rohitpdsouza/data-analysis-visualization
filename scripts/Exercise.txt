@@ -12,3 +12,5 @@
 To learn more about a position adjustment, look up the help page associated with each adjustment: ?position_dodge, ?position_fill, ?position_identity, ?position_jitter, and ?position_stack.
 
 6)#(V) Co-ordinate systems
+
+7) dynamic version that detects 4th Thursday of November in any year as thanksgiving
