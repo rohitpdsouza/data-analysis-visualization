@@ -166,5 +166,4 @@ calendar <- flights |>
     .keep = "used"
   ) 
 
-View(calendar)
 
