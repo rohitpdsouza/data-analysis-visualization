@@ -13,12 +13,35 @@ ggplot(penguins, aes(x = species, fill = island)) +
 ##to order in frequency of count
 ggplot(penguins, aes(x = fct_infreq(species), fill = island)) + 
   geom_bar() 
+#A factor = categorical variable in R with defined levels (variable that can take a limited number of distinct values called levels)
+#nominal factors : categories that have no inherent order (e.g. "mango", "apple")
+#ordinal factors : categories that have a meaningful order (e.g. "small" "medium" "large")
 
 
 ## to see the relative frequency
 ggplot(penguins, aes(x = island, fill = species)) + 
   geom_bar(position="fill")
 
+#position in geom functions controls how the bars are placed relative to each other when there is more than one category
+#per x-value
+
+#stack (default) : bars on top of each other
+ggplot(penguins, aes(x = island, fill = species)) + 
+  geom_bar(position="stack")
+
+#dodge : bars placed side by side
+ggplot(penguins, aes(x = island, fill = species)) + 
+  geom_bar(position="dodge")
+
+#fill : bars are stacked but their heights are scaled to the same total, so the proportion can be compared
+ggplot(penguins, aes(x = island, fill = species)) + 
+  geom_bar(position="fill")
+
+#identity : bars are drawn at the given height, no stacking
+#identity will draw the bars on top of each other, which causes overplotting and the tallest bar will hide other bars
+#identity is useful only when you supply your own y values and want them drawn as-is, often with transparency (alpha) to avoid hiding data
+ggplot(penguins, aes(x = island, fill = species)) + 
+  geom_bar(position="identity")
 
 ### Box plot
 ggplot(penguins, aes(x = species, y = body_mass_g)) + 
