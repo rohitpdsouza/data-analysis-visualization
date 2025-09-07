@@ -118,3 +118,34 @@ flights |>
   geom_point(
     aes(size = n)
   )
+
+#(VI) Logarithms
+log(100)  #e^x = 100
+log10(100) #10^x=100
+log2(16) #2^x=16
+log(64, base = 4) #4^x=64
+exp(2) #e^2
+
+#(VII) Rounding
+round(1.234, 2) #1.23
+round(1.235, 2) #1.24
+round(123.456, 1) #123.5
+round(123.456, -1) #120
+round(123.456, -2) #100
+#round() does "round half to even" or Banker's rounding, see below
+round(1.5) #2
+round(2.5) #2
+
+#ceiling will round up, floor will round down
+floor(1.5) #1
+floor(2.5) #2
+ceiling(1.5) #2  
+ceiling(1.4) #2
+ceiling(2.5) #3
+ceiling(2.3) #3
+floor(123.456 / 0.01) * 0.01 #123.45
+ceiling(123.456 / 0.01) * 0.01 #123.46
+
+
+
+
