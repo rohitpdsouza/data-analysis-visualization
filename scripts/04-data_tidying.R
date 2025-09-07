@@ -136,6 +136,8 @@ who2 |>
 # 4     4     2004-10-10  2009-08-27    Craig         Khai       
 # 5     5     2000-12-05  2005-02-28    Parker        Gracie 
 
+#.value tells pivot_longer that part of the column name should become the name of an existing column in the dataset
+#.value will turn "dob" and "name" into column names and "child1" and "child2" as values for the new column "child"
 household |>
   pivot_longer(
     cols = !family,
@@ -157,6 +159,35 @@ household |>
 # 5       child1    2000-12-05 Parker
 # 5       child2    2005-02-28 Gracie
 
+#If say we have 3 parts
+household2 <- tibble(
+  family = c("Smith", "Jones"),
+  income_child1_2020 = c(20000, 25000),
+  income_child2_2020 = c(15000, 18000),
+  age_child1_2020    = c(12, 14),
+  age_child2_2020    = c(10, 9)
+)
+
+household2 |> 
+  pivot_longer(
+    cols = !family,
+    names_sep = "_",
+    names_to = c(".value","child","year")
+  )
+
+#Another powerful way to do this is to specific regex using names_pattern for full control
+# . any single character
+# * zero or more times
+# + one or more times
+# \\d digits(0-9)
+ 
+household2 |>
+  pivot_longer(
+    cols = !family,
+    names_pattern = "(.*)_(child\\d)_(\\d+)",
+    names_to = c(".value", "child", "year")
+  )
+
 # (III) Pivot wide
 # Pivot long makes a dataset long by increasing rows and reducing columns
 # Pivot wide makes dataset wider by increasing columns and reducing rows when one observation is spread across multiple row
@@ -173,7 +204,7 @@ cms_patient_experience |>
     id_cols = starts_with("org"),
     names_from = measure_cd,
     values_from = prf_rate
-  )
+  ) 
 
 # A tibble: 95 × 8
 # org_pac_id org_nm                         CAHPS_GRP_1 CAHPS_GRP_2 CAHPS_GRP_3 CAHPS_GRP_5 CAHPS_GRP_8 CAHPS_GRP_12
