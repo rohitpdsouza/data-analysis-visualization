@@ -210,7 +210,12 @@ tribble(
 # 2       b         0.02
 # 3       c         0.03
 
-
+## dataframe
+df <- data.frame(
+  id = 1:3,
+  name = c("john","alice","mary"),
+  salary = c(100,200,300)
+)
 
 
 

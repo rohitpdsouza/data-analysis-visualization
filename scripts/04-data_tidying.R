@@ -219,3 +219,50 @@ cms_patient_experience |>
 # 0941545784 GRITMAN MEDICAL CENTER INC              46          86          81          54          NA           25
 # 1052612785 COMMUNITY MEDICAL GROUP LLC             65          84          80          58          87           29
 # 1254237779 OUR LADY OF LOURDES MEMORIAL …          61          NA          NA          65          NA           17
+
+
+## (IV) janitor package
+
+##janitor::clean_names() - to standardize and clean column names in a data frame or tibble
+# It applies consistent formatting by:
+# - Converting names to lowercase.
+# - Replacing spaces and special characters with underscores.
+# - Removing leading or trailing whitespace.
+# - Ensuring names start with a letter.
+# - Making the names R-friendly and consistent.
+
+# janitor::clean_names(dat, case = "snake")
+# dat: The dataframe or tibble you want to clean.
+# case: The desired casing format:
+# "snake" → my_variable_name (default)
+# "lower_camel" → myVariableName
+# "upper_camel" → MyVariableName
+# "screaming_snake" → MY_VARIABLE_NAME
+# "lower_upper" → myVARIABLEname
+# "upper_lower" → MYvariableNAME
+
+df <- data.frame(
+  "First Name" = c("Alice", "Bob"),
+  "Last Name!" = c("Smith", "Jones"),
+  "AGE (Years)" = c(25, 30)
+)
+
+janitor::clean_names(df)
+
+##remove_empty() - Removes empty rows and/or columns
+df <- data.frame(a = c(1, 2, NA), b = c(NA, NA, NA))
+df |> 
+  janitor::remove_empty(which = c("cols", "rows"))
+
+## get_dupes() - find duplicate rows
+df <- data.frame(id = c(1, 2, 2, 3), name = c("A", "B", "B", "C"))
+df |> janitor::get_dupes()
+
+##compare_df_cols() - compare data frame columns and types
+df1 <- data.frame(a = 1, b = "x")
+df2 <- data.frame(a = 2, c = 5)
+janitor::compare_df_cols(df1, df2)
+
+##excel_numeric_to_date() - convert excel numbers to R date
+janitor::excel_numeric_to_date(43500)
+
