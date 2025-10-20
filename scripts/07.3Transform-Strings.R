@@ -80,6 +80,111 @@ df |>
 )
 
 
+# (IV) Widening problems
+#separate_wider_delim requires a fixed set of columns
+
+df <- tibble(x = c("1-1-1", "1-1-2", "1-3", "1-3-2", "1"))
+df |> 
+  separate_wider_delim(
+    x,
+    delim = "-",
+    names = c("x", "y", "z")
+  )
+
+#Error in `separate_wider_delim()`:
+#  ! Expected 3 pieces in each element of `x`.
+#! 2 values were too short.
+#ℹ Use `too_few = "debug"` to diagnose the problem.
+#ℹ Use `too_few = "align_start"/"align_end"` to silence this message.
+#Run `rlang::last_trace()` to see where the error occurred.
+
+df |> 
+  separate_wider_delim(
+    x,
+    delim = "-",
+    names = c("x", "y", "z"),
+    too_few = "debug"
+  )
+
+df |> 
+  separate_wider_delim(
+    x,
+    delim = "-",
+    names = c("x", "y", "z"),
+    too_few = "debug"
+  )
+#x_ok tells which inputs failed
+#x_pieces tells us how many pieces were found 
+
+df |> 
+  separate_wider_delim(
+    x,
+    delim = "-",
+    names = c("x", "y", "z"),
+    too_few = "align_start" #values present will go in the columns at the start, NA in columns at the end 
+  )
+
+df |> 
+  separate_wider_delim(
+    x,
+    delim = "-",
+    names = c("x", "y", "z"),
+    too_few = "align_end" #values present will go in the columns at the end, NA in columns at the start 
+  )
+
+#x_remainder will tell us if there are too many pieces, more than the number of columns
+df <- tibble(x = c("1-1-1", "1-1-2", "1-3-5-6", "1-3-2", "1-3-5-7-9"))
+df |> 
+  separate_wider_delim(
+    x,
+    delim = "-",
+    names = c("x", "y", "z"),
+    too_many = "debug"
+  )
+
+#use drop to silently drop the extra pieces
+#use merge to merge the extra pieces
+df <- tibble(x = c("1-1-1", "1-1-2", "1-3-5-6", "1-3-2", "1-3-5-7-9"))
+df |> 
+  separate_wider_delim(
+    x,
+    delim = "-",
+    names = c("x", "y", "z"),
+    too_many = "drop"
+  )
+
+df <- tibble(x = c("1-1-1", "1-1-2", "1-3-5-6", "1-3-2", "1-3-5-7-9"))
+df |> 
+  separate_wider_delim(
+    x,
+    delim = "-",
+    names = c("x", "y", "z"),
+    too_many = "merge"
+  )
+
+#(V) Length
+str_length(c("a", "R for data science", NA))
+
+#(VI) Subsetting
+#str_sub(x, start_pos, end_pos)
+
+x <- c("Apple", "Banana", "Pear")
+str_sub(x, 1, 3)
+
+str_sub(x, -3, -1)
+
+#(VII) Encoding
+x1 <- "text\nEl Ni\xf1o was particularly bad this year"
+read_csv(text = x1)
+
+x1 <- "text\nEl Ni\xf1o was particularly bad this year"
+read_csv(x1, locale = locate(encoding = "UTF-8"))
+
+
+
+
+
+
 
 
 
