@@ -1,7 +1,7 @@
 library(tidyverse)
 library(readxl)
 
-borrower <- read_excel("C:/Users/prohi/PycharmProjects/POC/ML/borrowers_with_clusters_vae_2.xlsx")
+borrower <- read_excel("C:/Users/prohi/PycharmProjects/POC/ML/data/output/borrowers_with_clusters_vae_2.xlsx")
 print(borrower)
 glimpse(borrower)
 
@@ -17,7 +17,7 @@ borrower_clusters <-
     avg_debt_to_income = mean(debt_to_income) * 100,
     avg_outstanding_loan_amt = mean(loan_amount_outstanding) * 100,
     n = n(),
-    .by = cluster
+    .by = cluster_n
   )
 
 ggplot(borrower_df, aes(x = cluster_n, y = credit_utilization)) + 
