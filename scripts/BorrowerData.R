@@ -1,5 +1,8 @@
+# Plot the borrower clusters #
+
 library(tidyverse)
 library(readxl)
+
 
 borrower <- read_excel("C:/Users/prohi/PycharmProjects/POC/ML/data/output/borrowers_with_clusters_vae_2.xlsx")
 print(borrower)
@@ -8,7 +11,6 @@ glimpse(borrower)
 borrower_df <- 
   borrower |>
   mutate(cluster_n = paste0("cluster", "_", borrower$cluster_id))
-
 
 borrower_clusters <-
   borrower_df |>
@@ -60,6 +62,7 @@ ggplot(borrower_df, aes(x = cluster_n, y = debt_to_income)) +
     x = "cluster_n", 
     y = "debt_to_income"
   )
+
 
 ggplot(borrower_df, aes(x = cluster_n, y = loan_amount_outstanding)) + 
   geom_boxplot(
